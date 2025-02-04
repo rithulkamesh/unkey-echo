@@ -4,6 +4,7 @@ go 1.23.0
 
 require (
 	github.com/go-redis/redis/v8 v8.11.5
+	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/labstack/echo/v4 v4.13.3
 	github.com/unkeyed/unkey-go v0.11.0
 	go.mongodb.org/mongo-driver v1.17.2

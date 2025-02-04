@@ -4,14 +4,17 @@ import (
 	"log"
 	"os"
 
+	"github.com/kordlab/marketplace/config"
+	"github.com/kordlab/marketplace/data"
 	"github.com/labstack/echo/v4"
 	unkeygo "github.com/unkeyed/unkey-go"
 )
 
-var Port = ":3423"
-
 type AppState struct {
 	UnkeyClient *unkeygo.Unkey
+	MongoDB     *data.MongoDB
+	RedisDB     *data.RedisDB
+	AuthHandler *AuthHandler
 }
 
 func initializeAppState() (*AppState, error) {
@@ -19,9 +22,23 @@ func initializeAppState() (*AppState, error) {
 		unkeygo.WithSecurity(os.Getenv("UNKEY_ROOT_KEY")),
 	)
 
-	return &AppState{
+	cfg := config.LoadConfig()
+	mongodb, err := data.NewMongoDB(cfg)
+	if err != nil {
+		return nil, err
+	}
+
+	redis, err := data.NewRedisDB(cfg)
+	if err != nil {
+		return nil, err
+	}
+	appState := &AppState{
 		UnkeyClient: unkeyClient,
-	}, nil
+		MongoDB:     mongodb,
+		RedisDB:     redis,
+	}
+	appState.AuthHandler = NewAuthHandler(mongodb, redis)
+	return appState, nil
 }
 
 func Serve() {
@@ -31,9 +48,7 @@ func Serve() {
 	}
 
 	e := echo.New()
-	e.Use(unkeyMiddleware(appState))
+	registerAuthRoutes(e, appState.AuthHandler)
 
-	registerAuthRoutes(e)
-
-	e.Logger.Fatal(e.Start(Port))
+	e.Logger.Fatal(e.Start(":8080"))
 }

@@ -74,6 +74,10 @@ func (m *MongoDB) Disconnect(ctx context.Context) error {
 	return m.client.Disconnect(ctx)
 }
 
+func (m *MongoDB) GetJWTSecret() string {
+	return m.config.JWTSecret
+}
+
 func (m *MongoDB) Close(ctx context.Context) error {
 	if err := m.client.Disconnect(ctx); err != nil {
 		return err
