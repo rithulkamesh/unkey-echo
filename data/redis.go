@@ -84,3 +84,7 @@ func (r *RedisDB) GetCachedUser(userID string) (*User, error) {
 func (r *RedisDB) Close() error {
 	return r.client.Close()
 }
+
+func (r *RedisDB) Client() *redis.Client {
+	return r.client
+}

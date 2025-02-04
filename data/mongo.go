@@ -14,7 +14,7 @@ type MongoDB struct {
 	client   *mongo.Client
 	database *mongo.Database
 	config   *config.Config
-	redis    *RedisDB // Add Redis client
+	redis    *RedisDB
 }
 
 // Collections
@@ -96,4 +96,8 @@ func (m *MongoDB) Products() *mongo.Collection {
 
 func (m *MongoDB) Purchases() *mongo.Collection {
 	return m.database.Collection(PurchasesCollection)
+}
+
+func (m *MongoDB) Client() *mongo.Client {
+	return m.client
 }
