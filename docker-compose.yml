@@ -1,0 +1,27 @@
+version: "3.8"
+services:
+  api:
+    build: .
+    env_file: .env
+    depends_on:
+      - mongo
+      - redis
+    ports:
+      - "8080:8080"
+
+  mongo:
+    image: mongo:latest
+    volumes:
+      - mongo_data:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASS}
+
+  redis:
+    image: redis:alpine
+    volumes:
+      - redis_data:/data
+
+volumes:
+  mongo_data:
+  redis_data:
